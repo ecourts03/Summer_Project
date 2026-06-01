@@ -1,5 +1,6 @@
 '''
-Loading mesh files 
+Loading raw data files into arrays etc 
+ 
 '''
  
 from __future__ import annotations
@@ -23,7 +24,6 @@ class VolumeMesh:
  
     @property
     def grid(self) -> np.ndarray:
-        """ Reshape """
         return self.points.reshape(self.nj, self.ni, 3) 
  
     @property
@@ -75,16 +75,14 @@ def load_xyz(path: str | Path) -> np.ndarray:
 
     return pts
  
- 
+""" Files sent in 3D with no data change to 2D (also check if 3D data available )"""
 def to_2d(points: np.ndarray) -> np.ndarray:
     if not np.allclose(points[:, 1], 0.0):
         raise ValueError()
     return points[:, [0, 2]]
  
- 
+"""Helper function for"""
 def _extract_dim(zone_line_upper: str, key: str) -> int | None:
-    """Pull an integer dimension like I=257 from a ZONE line (case-insensitive)."""
-    # Normalise "I=257" and "I = 257" alike.
     toks = zone_line_upper.replace("=", " = ").split()
     for k, tok in enumerate(toks):
         if tok == key and k + 2 < len(toks) and toks[k + 1] == "=":
