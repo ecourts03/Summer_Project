@@ -1,15 +1,6 @@
 '''
-Rotate the aerofoil by a fixed angle and deform the volume mesh with RBF (OBJ1)
-
-Reads control points from the surface file and the volume mesh separately,
-matching the RBF structure (slide 183): surface = control points (f_Control),
-volume mesh = points to move (s_Evaluation).
-
-Pipeline:  load surface (control) + volume mesh -> rotate surface
-           -> RBF deform all volume points -> write deformed Tecplot file
-
-Run from the repo root:
-    python Scripts/03_rotate_deform.py
+Created by Ewan Courts on 02/06/2026
+Initial testing for the RBF function by testing roatation 
 '''
 
 from pathlib import Path
@@ -20,9 +11,9 @@ from rbf_deform import load_plt, load_xyz, to_2d, deform, write_plt
 MESH_DIR = Path(__file__).resolve().parents[1] / "Mesh files"
 VOLUME_FILE = MESH_DIR / "NACA0012257x129.plt"
 SURFACE_FILE = MESH_DIR / "surface257.xyz" 
-OUT = Path(__file__).resolve().parents[1] / "5deg.plt"
+OUT = MESH_DIR / "5deg.plt"
 
-ANGLE_DEG = -45                 
+ANGLE_DEG = -5                 
 CENTRE = np.array([0.0, 0.0])    
 R = 5.0                          
 
@@ -49,23 +40,23 @@ def main():
     rotated = rotate(ctrl, ANGLE_DEG, CENTRE)
     disp = rotated - ctrl
 
-    """ RBF deform the whole volume """
+    """ RBF deform the whole mesh """
     deformed, info = deform(vol, ctrl, disp, R)
     print(f"Angle = {ANGLE_DEG} deg, R = {R}")
     print(f"Control points N = {info['N']}, condition number = {info['cond']:.3e}")
     print(f"Max surface displacement = {np.abs(disp).max():.4f}")
 
-    """ Back to Tecplot X,Y,Z layout (Y stays zero, our 2D 'y' is Tecplot Z) """
+    """ Tecplot layout """
     out_xyz = np.zeros((deformed.shape[0], 3))
     out_xyz[:, 0] = deformed[:, 0]
     out_xyz[:, 2] = deformed[:, 1]
 
-    """ Displacement magnitude per point so Tecplot can colour by it """
+    """ Displacement contour to see radius influence / if it even worked  """
     vol_disp = deformed - vol
     dmag = np.sqrt(vol_disp[:, 0] ** 2 + vol_disp[:, 1] ** 2)
 
     write_plt(OUT, out_xyz, mesh.ni, mesh.nj, mesh.nk,
-              extra_vars={"DispMag": dmag}, zone_title="deformed_5deg")
+              extra_vars={"DispMag": dmag}, zone_title="5deg_def")
     print(f"Written: {OUT}")
 
 
