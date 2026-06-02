@@ -1,18 +1,6 @@
-"""Writing meshes back out as ASCII Tecplot files.
+"""
+Writing numpy arrays into tecplot Formatting
 
-The goal is faithful round-tripping: a mesh read by :func:`load_plt`, written by
-:func:`write_plt`, and re-read must reproduce the same grid Tecplot sees. This
-keeps every stage of the project (baseline, each reduction method, the 2D
-comparison) producing Tecplot-viewable output by default.
-
-Format notes (matched to the supplied NACA 0012 file):
-  * header line:  VARIABLES = "X" "Y" "Z"   (extra names appended if given)
-  * zone line:    ZONE I=257 J=129 K=1 F=POINT
-  * data:         one point per line, i varying fastest, then j, then k,
-                  written at full double precision.
-
-Extra per-point variables (e.g. displacement magnitude, a mesh-quality metric)
-can be appended as additional columns so Tecplot can colour the mesh by them.
 """
 
 from __future__ import annotations
