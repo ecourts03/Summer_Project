@@ -1,5 +1,6 @@
 '''
 Loading raw data files into arrays etc 
+Should work for 2D and 3D
 
 '''
 
@@ -29,12 +30,12 @@ class VolumeMesh:
 
     @property
     def grid(self) -> np.ndarray:
-        """ Reshape to (nk, nj, ni, 3) so 2D (nk=1) and 3D both work """
+        """ Reshape to (nk, nj, ni, 3) """
         return self.points.reshape(self.nk, self.nj, self.ni, 3)
 
     @property
     def surface(self) -> np.ndarray:
-        """ Get aerofoil (j=0): ring in 2D (ni,3), sheet in 3D (nk,ni,3) """
+        """ Get aerofoil (j=0) """
         block = self.grid[:, 0, :, :]
         if not self.is_3d:
             return block[0]
@@ -42,7 +43,7 @@ class VolumeMesh:
 
     @property
     def farfield(self) -> np.ndarray:
-        """ Get boundary (j=nj-1): ring in 2D, sheet in 3D """
+        """ Get boundary (j=nj-1)"""
         block = self.grid[:, -1, :, :]
         if not self.is_3d:
             return block[0]
@@ -50,12 +51,12 @@ class VolumeMesh:
 
     @property
     def surface_points(self) -> np.ndarray:
-        """ Aerofoil as flat (M,3) list - RBF control points, same in 2D/3D """
+        """ Aerofoil as flat (M,3) list - RBF control points"""
         return self.surface.reshape(-1, 3)
 
     @property
     def farfield_points(self) -> np.ndarray:
-        """ Boundary as flat (M,3) list, same in 2D/3D """
+        """ Boundary as flat (M,3) list """
         return self.farfield.reshape(-1, 3)
 
 """ Read O mesh file """
@@ -77,14 +78,14 @@ def load_plt(path: str | Path) -> VolumeMesh:
             data_start = idx + 1
             break
 
-    """ K is optional, absent means a single layer (2D) """
+    
     if nk is None:
         nk = 1
 
     rows = [ln.split() for ln in lines[data_start:] if ln.strip()]
     points = np.array(rows, dtype=float)
 
-    """ Check the file isn't broken - catches 3D mistakes early """
+    """ Check the file isn't broken"""
     if points.shape[0] != ni * nj * nk:
         raise ValueError(f"expected {ni*nj*nk} points (I={ni} J={nj} K={nk}), read {points.shape[0]}")
 
@@ -109,7 +110,7 @@ def to_2d(points: np.ndarray) -> np.ndarray:
         raise ValueError()
     return points[:, [0, 2]]
 
-"""Helper function for extracting I/J/K from the ZONE line"""
+"""Helper function for extracting I/J/K"""
 def _extract_dim(zone_line_upper: str, key: str) -> int | None:
     toks = zone_line_upper.replace("=", " = ").split()
     for k, tok in enumerate(toks):
