@@ -1,5 +1,6 @@
 '''
-Loading raw data files into arrays etc 
+Created by Ewan Courts on 26/05/2026
+Files into arrays etc 
 Should work for 2D and 3D
 
 '''

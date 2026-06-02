@@ -1,11 +1,6 @@
-"""Inspect the NACA 0012 mesh: load both files, print a summary, and plot.
-
-Run from the repo root:
-    python scripts/01_inspect_mesh.py
-
-Produces two figures:
-  * the full grid (every Nth line, so it's legible) with the airfoil highlighted
-  * a zoom on the airfoil surface
+"""
+Created by Ewan on 27/05/2026 
+Test loads correctly into numpy + some plots
 """
 
 from pathlib import Path
@@ -49,7 +44,6 @@ def main() -> None:
     ax2.set_title("Airfoil surface: 257 control-point candidates")
     fig2.savefig("airfoil_zoom.png", dpi=130, bbox_inches="tight")
 
-    print("Saved mesh_full.png and airfoil_zoom.png")
 
 
 if __name__ == "__main__":

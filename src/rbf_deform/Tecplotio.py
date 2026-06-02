@@ -1,6 +1,5 @@
 """
 Writing numpy arrays into tecplot Formatting
-
 """
 
 from __future__ import annotations

@@ -1,8 +1,8 @@
 '''
-Created by Ewan Courts on 31/05/2026
+Created by Ewan Courts on 28/05/2026
 Building the RBF 
 Uses Wendland C2 basis function 
-Solves by 
+Method - Solves influence matrix
 '''
 
 from __future__ import annotations

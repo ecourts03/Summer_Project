@@ -15,7 +15,7 @@ OUT = MESH_DIR / "5deg.plt"
 
 ANGLE_DEG = -5                 
 CENTRE = np.array([0.0, 0.0])    
-R = 5.0                          
+R = 0.2                          
 
 
 """ Rotate the initial mesh """
