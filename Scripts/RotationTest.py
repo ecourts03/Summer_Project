@@ -13,9 +13,9 @@ VOLUME_FILE = MESH_DIR / "NACA0012257x129.plt"
 SURFACE_FILE = MESH_DIR / "surface257.xyz" 
 OUT = MESH_DIR / "5deg.plt"
 
-ANGLE_DEG = -5                 
+ANGLE_DEG = -30                 
 CENTRE = np.array([0.0, 0.0])    
-R = 0.2                          
+R = 2                        
 
 
 """ Rotate the initial mesh """

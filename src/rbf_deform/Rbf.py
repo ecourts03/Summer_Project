@@ -11,14 +11,27 @@ import numpy as np
 from scipy.spatial.distance import cdist
 
 
-""" Building Wendland C2 basis function  """
-def wendland_c2(r: np.ndarray) -> np.ndarray:
+""" Building Wendland compact basis functions - expanded for orders C0,C2,C4"""
+def wendland(r: np.ndarray, order: str = "C2") -> np.ndarray:
     r = np.asarray(r, dtype=float)
     phi = np.zeros_like(r)
     inside = r < 1.0
     rr = r[inside]
-    phi[inside] = (1.0 - rr) ** 4 * (4.0 * rr + 1.0)
+    one_minus = 1.0 - rr
+    if order == "C0":
+        phi[inside] = one_minus ** 2
+    elif order == "C2":
+        phi[inside] = one_minus ** 4 * (4.0 * rr + 1.0)
+    elif order == "C4":
+        phi[inside] = one_minus ** 6 * (35.0 * rr ** 2 + 18.0 * rr + 3.0) / 3.0
+    else:
+        raise ValueError(f"unknown Wendland order '{order}' (use C0, C2 or C4)")
     return phi
+ 
+ 
+""" Dont break existing code """
+def wendland_c2(r: np.ndarray) -> np.ndarray:
+    return wendland(r, "C2")
 
 
 """ Build the influence Matrix C """
