@@ -34,10 +34,10 @@ def wendland_c2(r: np.ndarray) -> np.ndarray:
     return wendland(r, "C2")
 
 
-""" Build the influence Matrix C """
-def build_C(control_pts: np.ndarray, R: float) -> np.ndarray:
+""" Build the control-point influence matrix C """
+def build_C(control_pts, R, order="C2"):
     dist = cdist(control_pts, control_pts)
-    return wendland_c2(dist / R)
+    return wendland(dist / R, order)
 
 
 """ Solve for RBF weights - gamma """
@@ -46,21 +46,18 @@ def solve_weights(C: np.ndarray, f: np.ndarray) -> np.ndarray:
 
 
 """ Evaluate the interpolation at all points to find deformation """
-def evaluate(eval_pts: np.ndarray, control_pts: np.ndarray, gamma: np.ndarray, R: float) -> np.ndarray:
+def evaluate(eval_pts, control_pts, gamma, R, order="C2"):
     dist = cdist(eval_pts, control_pts)
-    A = wendland_c2(dist / R)
+    A = wendland(dist / R, order)
     return A @ gamma
 
 
 """ Apply deformation to the mesh  """
-def deform(volume_pts: np.ndarray, control_pts: np.ndarray, surface_disp: np.ndarray, R: float):
-    C = build_C(control_pts, R)
-    gamma = solve_weights(C, surface_disp)
-    volume_disp = evaluate(volume_pts, control_pts, gamma, R)
-    deformed = volume_pts + volume_disp
-
-    """ Condition number  """
+def deform(volume_pts, control_pts, surface_disp, R, order="C2"):
+    C = build_C(control_pts, R, order)
     cond = np.linalg.cond(C)
-
-    info = {"R": R, "cond": cond, "N": control_pts.shape[0]}
+    gamma = solve_weights(C, surface_disp)
+    volume_disp = evaluate(volume_pts, control_pts, gamma, R, order)
+    deformed = volume_pts + volume_disp
+    info = {"R": R, "cond": cond, "N": control_pts.shape[0], "order": order}
     return deformed, info
